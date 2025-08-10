@@ -1,33 +1,43 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Bulut Üssü</title>
-  <style>
-    body{font-family:system-ui,Segoe UI,Arial;margin:2rem}
-    button{padding:.6rem 1rem}
-    pre{background:#f5f5f5;padding:1rem;border-radius:6px}
-  </style>
+  <meta charset="UTF-8" />
+  <title>Bulut Kaşifleri - Güvenli API Çağrısı</title>
 </head>
 <body>
-  <h1>Bulut Üssü</h1>
-  <p>Küçük demo: verileri çekmek için butona bas.</p>
-  <button id="get">Verileri Getir</button>
-  <div id="out"></div>
+  <h1>Bulut Kaşifleri - Verileri Getir</h1>
+  <button id="btnGetData">Verileri Getir</button>
+  <pre id="output"></pre>
 
   <script>
-    document.getElementById('get').addEventListener('click', async () => {
-      document.getElementById('out').textContent = 'Yükleniyor...';
-      // Bu başlangıç hali; görev 4'te bu çağrı anahtarlı olacak
+    const API_URL = "https://api0.gemalmazhira.workers.dev/"; // Buraya Worker URL'ni yaz
+    const API_KEY = "BulutGuvenligi0";
+
+    document.getElementById("btnGetData").addEventListener("click", async () => {
+      const output = document.getElementById("output");
+      output.textContent = "Veriler yükleniyor...";
+
       try {
-        const res = await fetch('/api/placeholder'); // deploy sonrası değiştir
-        const json = await res.json();
-        document.getElementById('out').innerHTML = '<pre>' + JSON.stringify(json, null, 2) + '</pre>';
+        const res = await fetch(API_URL, {
+          method: "GET",
+          headers: {
+            "x-api-key": API_KEY
+          }
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          output.textContent = `Hata: ${err.error}`;
+          return;
+        }
+
+        const data = await res.json();
+        output.textContent = JSON.stringify(data, null, 2);
       } catch (e) {
-        document.getElementById('out').textContent = 'Hata: ' + e.message;
+        output.textContent = "İstek sırasında hata oluştu.";
       }
     });
   </script>
 </body>
 </html>
+
